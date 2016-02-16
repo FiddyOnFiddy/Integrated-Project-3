@@ -8,7 +8,7 @@ public class MouseManager : MonoBehaviour
 	// Use this for initialization
 	void Start () 
     {
-	
+
 	}
 	
 	// Update is called once per frame
@@ -35,13 +35,9 @@ public class MouseManager : MonoBehaviour
 
             Debug.Log("Raycast hit: " + ourHitObject.name);
 
-            if (Input.GetMouseButtonUp(0) && ourHitObject.tag == "Tile" || Input.GetMouseButtonUp(0) && ourHitObject.tag == "Building" && upDot > 0.0f && upPower > fwdPower && upPower > rightPower)
+            if (Input.GetMouseButtonUp(0) && ourHitObject.tag == "Tile"|| Input.GetMouseButtonUp(0) && ourHitObject.tag == "Building" && upDot > 0.0f && upPower > fwdPower && upPower > rightPower)
             {
-                GameObject placeableTile_go = (GameObject)Instantiate(placeableTile, new Vector3(ourHitObject.transform.position.x, ourHitObject.transform.position.y + 1, ourHitObject.transform.position.z), Quaternion.identity);
-            }
-            if(Input.GetMouseButtonUp(1) && ourHitObject.tag == "Building")
-            {
-                Destroy(ourHitObject);           
+                GameObject placeableTile_go = (GameObject)Instantiate(placeableTile, new Vector3(ourHitObject.transform.position.x, ourHitObject.transform.position.y + 1.5f, ourHitObject.transform.position.z), placeableTile.transform.rotation);
             }
         }
 	

@@ -3,6 +3,7 @@ using System.Collections;
 
 public class TileColorChange : MonoBehaviour 
 {
+    public bool canPlace = true;
 
 	// Use this for initialization
 	void Start ()
@@ -27,6 +28,4 @@ public class TileColorChange : MonoBehaviour
         MeshRenderer mr = this.gameObject.GetComponent<MeshRenderer>();
         mr.material.color = Color.white;
     }
-
-
 }
