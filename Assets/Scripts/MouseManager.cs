@@ -4,6 +4,10 @@ using System.Collections;
 public class MouseManager : MonoBehaviour 
 {
     public GameObject placeableTile;
+    public float xOffset = -0.25f;
+    public float yOffSet = 1.0f;
+    public float zOffset = -0.25f;
+
 
 	// Use this for initialization
 	void Start () 
@@ -37,7 +41,7 @@ public class MouseManager : MonoBehaviour
 
             if (Input.GetMouseButtonUp(0) && ourHitObject.tag == "Tile"|| Input.GetMouseButtonUp(0) && ourHitObject.tag == "Building" && upDot > 0.0f && upPower > fwdPower && upPower > rightPower)
             {
-                GameObject placeableTile_go = (GameObject)Instantiate(placeableTile, new Vector3(ourHitObject.transform.position.x, ourHitObject.transform.position.y + 1.5f, ourHitObject.transform.position.z), placeableTile.transform.rotation);
+                GameObject placeableTile_go = (GameObject)Instantiate(placeableTile, new Vector3(ourHitObject.transform.position.x + xOffset, ourHitObject.transform.position.y + yOffSet, ourHitObject.transform.position.z + zOffset), placeableTile.transform.rotation);
             }
         }
 	
