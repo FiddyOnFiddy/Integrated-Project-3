@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GridCreationScript : MonoBehaviour 
 {
@@ -9,7 +10,6 @@ public class GridCreationScript : MonoBehaviour
     int width = 20;
     int height = 20;
 
-    float speed = 5.0f;
 
 	// Use this for initialization
 	void Start () 

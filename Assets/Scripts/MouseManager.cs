@@ -9,6 +9,8 @@ public class MouseManager : MonoBehaviour
     public float yOffSet = 1.0f;
     public float zOffset = -0.25f;
 
+    
+
 
 	// Use this for initialization
 	void Start () 
@@ -28,31 +30,42 @@ public class MouseManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if(Physics.Raycast(ray, out hit))
+
+        if (Physics.Raycast(ray, out hit))
         {
             GameObject ourHitObject = hit.collider.transform.gameObject;
-            MouseOverTile(ourHitObject);
-
-            //Debug.Log("Raycast hit: " + ourHitObject.name);
+            SpawnBuilding(ourHitObject);
+            Debug.Log("Raycast hit: " + ourHitObject.name);
             
         }
 	
 	}
 
-    void MouseOverTile(GameObject ourHitObject)
+    void SpawnBuilding(GameObject ourHitObject)
     {
         BuildingManager bm = GameObject.FindObjectOfType<BuildingManager>();
         TileColorChange tileColourChange = ourHitObject.GetComponent<TileColorChange>();
 
-        if (Input.GetMouseButtonUp(0) && ourHitObject.tag == "Tile")
+        if (Input.GetMouseButtonUp(0) && ourHitObject.tag == "Tile" && tileColourChange.clickable == true && tileColourChange.tileAbove.GetComponent<TileColorChange>().clickable == true)
         {
             if(bm.selectedBuilding.tag == "Factory" && tileColourChange.tileAbove != null )
             {
+                tileColourChange.clickable = false;
+                tileColourChange.tileAbove.GetComponent<TileColorChange>().clickable = false;
+
+                tileColourChange.GetComponent<MeshRenderer>().material.color = Color.white;
+                tileColourChange.tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
+
+
                 Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
             }
             if(bm.selectedBuilding.tag == "Tower")
             {
+                tileColourChange.clickable = false;
+                tileColourChange.GetComponent<MeshRenderer>().material.color = Color.white;
+
                 Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+
             }
 
         }
