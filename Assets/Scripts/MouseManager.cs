@@ -71,5 +71,15 @@ public class MouseManager : MonoBehaviour
         }
     }
 
+    void DestroyBuilding(GameObject ourHitObject)
+    {
+
+    }
+
+    void findBuildingUIButtons()
+    {
+
+    }
+
    
 }

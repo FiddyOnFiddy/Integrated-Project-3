@@ -10,12 +10,17 @@ public class BuildingInteractionScript : MonoBehaviour
     public Button sellButton;
     public Button upgradeButton;
     public toggleUIScript toggleUI;
+    GameObject buildingGridPos;
+    GameObject tileAbove;
 
 
 	// Use this for initialization
 	void Start ()
     {
         toggleUI = GameObject.FindObjectOfType<toggleUIScript>();
+
+        buildingGridPos = GameObject.Find("Tile: " + (gameObject.transform.position.x) + "_" + gameObject.transform.position.z);
+        tileAbove = GameObject.Find("Tile: " + (gameObject.transform.position.x + 1) + "_" + gameObject.transform.position.z);
 
 
         Transform t = toggleUI.gameObject.transform;
@@ -35,7 +40,6 @@ public class BuildingInteractionScript : MonoBehaviour
             }
         }
 
-        sellButton.onClick.AddListener(delegate { SellBuilding(); });
 	}
 	
 	// Update is called once per frame
@@ -49,12 +53,18 @@ public class BuildingInteractionScript : MonoBehaviour
 
     void OnMouseUpAsButton()
     {
+        //Find buildings tile position by name
+
+        sellButton.onClick.AddListener(delegate { SellBuilding(); });
+
+
         toggleUI.GetComponent<Canvas>().enabled = true;
         Debug.Log("Click");
     }
 
     public void SellBuilding()
     {
+        //destroy the appropriate building by name and turn the bool clickable at that tile to false
         toggleUI.GetComponent<Canvas>().enabled = false;
         Destroy(this.gameObject);
     }
