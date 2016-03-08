@@ -61,9 +61,10 @@ public class MouseManager : MonoBehaviour
         BuildingManager bm = GameObject.FindObjectOfType<BuildingManager>();
         TileColorChange tileColourChange = ourHitObject.GetComponent<TileColorChange>();
 
-        if (Input.GetMouseButtonUp(0) && ourHitObject.tag == "Tile" && tileColourChange.clickable == true && tileColourChange.tileAbove.GetComponent<TileColorChange>().clickable == true)
+
+        if (Input.GetMouseButtonUp(0) && ourHitObject.tag == "Tile" )
         {
-            if(bm.selectedBuilding.tag == "Factory" || bm.selectedBuilding.tag == "Water Tower" || bm.selectedBuilding.tag == "Science Building" && tileColourChange.tileAbove != null )
+			if(bm.selectedBuilding.tag == "Factory" && tileColourChange.tileAbove != null && tileColourChange.clickable == true && tileColourChange.tileAbove.GetComponent<TileColorChange>().clickable == true)
             {
                 tileColourChange.clickable = false;
                 tileColourChange.tileAbove.GetComponent<TileColorChange>().clickable = false;
@@ -75,15 +76,40 @@ public class MouseManager : MonoBehaviour
                 Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
 
                 gameData.money -= factoryMoneyCost;
-                gameData.pollutionLevel -= factoryPollutionCost;
-
-                gameData.money -= scienceMoneyCost;
-                gameData.pollutionLevel -= sciencePollutionCost;
-
-                gameData.money -= waterMoneyCost;
-                gameData.pollutionLevel -= waterPollutionCost;
+                gameData.pollutionLevel += factoryPollutionCost;
+                
             }
-            if(bm.selectedBuilding.tag == "Tower")
+
+			if (bm.selectedBuilding.tag == "Water Tower" && tileColourChange.tileAbove != null && tileColourChange.clickable == true && tileColourChange.tileAbove.GetComponent<TileColorChange> ().clickable == true) 
+			{
+				tileColourChange.clickable = false;
+				tileColourChange.tileAbove.GetComponent<TileColorChange>().clickable = false;
+
+				tileColourChange.GetComponent<MeshRenderer>().material.color = Color.white;
+				tileColourChange.tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
+
+				Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+				gameData.money -= waterMoneyCost;
+				gameData.pollutionLevel += waterPollutionCost;
+			}
+
+			if (bm.selectedBuilding.tag == "Science Building" && tileColourChange.tileAbove != null && tileColourChange.clickable == true && tileColourChange.tileAbove.GetComponent<TileColorChange> ().clickable == true) 
+			{
+				tileColourChange.clickable = false;
+				tileColourChange.tileAbove.GetComponent<TileColorChange>().clickable = false;
+
+				tileColourChange.GetComponent<MeshRenderer>().material.color = Color.white;
+				tileColourChange.tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
+
+				Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+
+				gameData.money -= scienceMoneyCost;
+				gameData.pollutionLevel += sciencePollutionCost;
+			}
+
+
+
+			if(bm.selectedBuilding.tag == "Tower" && tileColourChange.clickable == true)
             {
                 tileColourChange.clickable = false;
                 tileColourChange.GetComponent<MeshRenderer>().material.color = Color.white;
@@ -91,30 +117,9 @@ public class MouseManager : MonoBehaviour
                 Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
 
                 gameData.money -= towerMoneyCost;
-                gameData.pollutionLevel -= towerPollutionCost;
+                gameData.pollutionLevel += towerPollutionCost;
 
             }
-
-            /*if (ourHitObject.tag == "Factory")
-            {
-                gameData.money -= factoryMoneyCost;
-                gameData.pollutionLevel -= factoryPollutionCost;
-                Destroy(ourHitObject);
-
-            }
-            else if (ourHitObject.tag == "Science Building")
-            {
-                gameData.money -= scienceMoneyCost;
-                gameData.pollutionLevel -= sciencePollutionCost;
-                Destroy(ourHitObject);
-            }
-            else if (ourHitObject.tag == "Water Building")
-            {
-                gameData.money -= waterMoneyCost;
-                gameData.pollutionLevel -= waterPollutionCost;
-                Destroy(ourHitObject);
-            }*/
-
         }
     }
 
@@ -143,26 +148,26 @@ public class MouseManager : MonoBehaviour
             if (ourHitObject.tag == "Factory")
             {
                 gameData.money += factoryMoneyCost;
-                gameData.pollutionLevel += factoryPollutionCost;
+                gameData.pollutionLevel -= factoryPollutionCost;
                 Destroy(ourHitObject);
 
             }
             if (ourHitObject.tag == "Tower")
             {
                 gameData.money += towerMoneyCost;
-                gameData.pollutionLevel += towerPollutionCost;
+                gameData.pollutionLevel -= towerPollutionCost;
                 Destroy(ourHitObject);
             }
             if (ourHitObject.tag == "Science Building")
             {
                 gameData.money += scienceMoneyCost;
-                gameData.pollutionLevel += sciencePollutionCost;
+                gameData.pollutionLevel -= sciencePollutionCost;
                 Destroy(ourHitObject);
             }
             if (ourHitObject.tag == "Water Tower")
             {
                 gameData.money += waterMoneyCost;
-                gameData.pollutionLevel += waterPollutionCost;
+                gameData.pollutionLevel -= waterPollutionCost;
                 Destroy(ourHitObject);
             }
         }
