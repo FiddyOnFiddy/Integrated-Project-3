@@ -59,18 +59,23 @@ public class MouseManager : MonoBehaviour
     void SpawnBuilding(GameObject ourHitObject)
     {
         BuildingManager bm = GameObject.FindObjectOfType<BuildingManager>();
-        TileColorChange tileColourChange = ourHitObject.GetComponent<TileColorChange>();
-
+       
 
         if (Input.GetMouseButtonUp(0) && ourHitObject.tag == "Tile" )
         {
-			if(bm.selectedBuilding.tag == "Factory" && tileColourChange.tileAbove != null && tileColourChange.clickable == true && tileColourChange.tileAbove.GetComponent<TileColorChange>().clickable == true)
-            {
-                tileColourChange.clickable = false;
-                tileColourChange.tileAbove.GetComponent<TileColorChange>().clickable = false;
+			TileColorChange tileUnderMouse = ourHitObject.GetComponent<TileColorChange>();
+			TileColorChange tileAbove = tileUnderMouse.tileAbove.GetComponent<TileColorChange> ();
+			TileColorChange tileLeft = tileUnderMouse.tileLeft.GetComponent<TileColorChange> ();
+			TileColorChange tileAboveLeft = tileUnderMouse.tileAboveLeft.GetComponent<TileColorChange> ();
 
-                tileColourChange.GetComponent<MeshRenderer>().material.color = Color.white;
-                tileColourChange.tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
+
+			if(bm.selectedBuilding.tag == "Factory" && tileUnderMouse.tileAbove != null && tileUnderMouse.clickable == true && tileAbove.clickable == true )
+            {
+                tileUnderMouse.clickable = false;
+				tileAbove.clickable = false;
+
+                tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
+				tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
 
 
                 Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
@@ -80,26 +85,30 @@ public class MouseManager : MonoBehaviour
                 
             }
 
-			if (bm.selectedBuilding.tag == "Water Tower" && tileColourChange.tileAbove != null && tileColourChange.clickable == true && tileColourChange.tileAbove.GetComponent<TileColorChange> ().clickable == true) 
+			if (bm.selectedBuilding.tag == "Water Tower" && tileUnderMouse.tileAbove != null && tileUnderMouse.clickable == true && tileAbove.clickable == true && tileLeft.clickable == true && tileAboveLeft.clickable == true) 
 			{
-				tileColourChange.clickable = false;
-				tileColourChange.tileAbove.GetComponent<TileColorChange>().clickable = false;
+				tileUnderMouse.clickable = false;
+				tileAbove.clickable = false;
+				tileLeft.clickable = false;
+				tileAboveLeft.clickable = false;
 
-				tileColourChange.GetComponent<MeshRenderer>().material.color = Color.white;
-				tileColourChange.tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
+				tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
+				tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
+				tileLeft.GetComponent<MeshRenderer> ().material.color = Color.white;
+				tileAboveLeft.GetComponent<MeshRenderer> ().material.color = Color.white;
 
 				Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
 				gameData.money -= waterMoneyCost;
 				gameData.pollutionLevel += waterPollutionCost;
 			}
 
-			if (bm.selectedBuilding.tag == "Science Building" && tileColourChange.tileAbove != null && tileColourChange.clickable == true && tileColourChange.tileAbove.GetComponent<TileColorChange> ().clickable == true) 
+			if (bm.selectedBuilding.tag == "Science Building" && tileUnderMouse.tileAbove != null && tileUnderMouse.clickable == true && tileAbove.clickable == true) 
 			{
-				tileColourChange.clickable = false;
-				tileColourChange.tileAbove.GetComponent<TileColorChange>().clickable = false;
+				tileUnderMouse.clickable = false;
+				tileAbove.clickable = false;
 
-				tileColourChange.GetComponent<MeshRenderer>().material.color = Color.white;
-				tileColourChange.tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
+				tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
+				tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
 
 				Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
 
@@ -109,10 +118,10 @@ public class MouseManager : MonoBehaviour
 
 
 
-			if(bm.selectedBuilding.tag == "Tower" && tileColourChange.clickable == true)
+			if(bm.selectedBuilding.tag == "Tower" && tileUnderMouse.clickable == true)
             {
-                tileColourChange.clickable = false;
-                tileColourChange.GetComponent<MeshRenderer>().material.color = Color.white;
+                tileUnderMouse.clickable = false;
+                tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
 
                 Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
 
@@ -139,14 +148,18 @@ public class MouseManager : MonoBehaviour
 
     public void SellBuilding(GameObject ourHitObject)
     {
-        //Get tile at building or tiles if wide building and change clickable to true. Find the tile by name
+        //Get tile at building or tiles if wide building and change clickable to true.
         toggleUI.GetComponent<Canvas>().enabled = false;
+
+
 
         if (ourHitObject != null)
         {
 
             if (ourHitObject.tag == "Factory")
             {
+				GameObject tileAtBUilding = GameObject.Find("Tile: " + (ourHitObject.transform.position.x - 0.25) + "_" + (ourHitObject.transform.position.z + 0.25));
+				Debug.Log ("Tile under building is: " + tileAtBUilding.name);
                 gameData.money += factoryMoneyCost;
                 gameData.pollutionLevel -= factoryPollutionCost;
                 Destroy(ourHitObject);
@@ -172,6 +185,7 @@ public class MouseManager : MonoBehaviour
             }
         }
     }
+
 
     void findBuildingUIButtons()
     {
