@@ -63,11 +63,11 @@ public class TileColorChange : MonoBehaviour
 					mr2 = tileAbove.GetComponent<MeshRenderer>();
 					mr2.material.color = Color.red;
 
-					mr3 = tileLeft.GetComponent<MeshRenderer>();
+					/*mr3 = tileLeft.GetComponent<MeshRenderer>();
 					mr3.material.color = Color.red;
 
 					mr4 = tileAboveLeft.GetComponent<MeshRenderer>();
-					mr4.material.color = Color.red;
+					mr4.material.color = Color.red;*/
 				}
 			}
         }
@@ -96,11 +96,11 @@ public class TileColorChange : MonoBehaviour
 					mr2 = tileAbove.GetComponent<MeshRenderer>();
 					mr2.material.color = Color.white;
 
-					mr3 = tileLeft.GetComponent<MeshRenderer>();
+					/*mr3 = tileLeft.GetComponent<MeshRenderer>();
 					mr3.material.color = Color.white;
 
 					mr4 = tileAboveLeft.GetComponent<MeshRenderer>();
-					mr4.material.color = Color.white;
+					mr4.material.color = Color.white;*/
 				}
 			}
         }

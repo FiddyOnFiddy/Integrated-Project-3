@@ -25,6 +25,13 @@ public class MouseManager : MonoBehaviour
     public int waterPollutionCost = 10;
     public int waterMoneyCost = 30;
 
+	public int maxBuildDistance =40;
+
+	public GameObject towerUpgrade;
+	public GameObject waterPlantUpgrade;
+	public GameObject scienceBuildingUpgrade;
+	public GameObject factoryUpgrade;
+
 	// Use this for initialization
 	void Start () 
     {
@@ -50,7 +57,7 @@ public class MouseManager : MonoBehaviour
             GameObject ourHitObject = hit.collider.transform.gameObject;
             DetectBuilding(ourHitObject);
             SpawnBuilding(ourHitObject);
-            Debug.Log("Raycast hit: " + ourHitObject.name);
+          //  Debug.Log("Raycast hit: " + ourHitObject.name);
             
         }
 	
@@ -78,26 +85,43 @@ public class MouseManager : MonoBehaviour
 				tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
 
 
-                Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+				GameObject obj=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+
+				//Calculate distance from camera and assign a value?
+				Vector3 distanceVec=Camera.main.transform.position-obj.transform.position;
+				//Does this fix it????????????? or do we need to multiply the magnitude and the maxBuildDistance to get rid of errors
+				int sortOrder=maxBuildDistance-(int)distanceVec.magnitude;
+
+				Debug.Log ("Distance "+distanceVec.magnitude.ToString());
+				obj.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
 
                 gameData.money -= factoryMoneyCost;
                 gameData.pollutionLevel += factoryPollutionCost;
                 
             }
 
-			if (bm.selectedBuilding.tag == "Water Tower" && tileUnderMouse.tileAbove != null && tileUnderMouse.clickable == true && tileAbove.clickable == true && tileLeft.clickable == true && tileAboveLeft.clickable == true) 
+			if (bm.selectedBuilding.tag == "Water Tower" && tileUnderMouse.tileAbove != null && tileUnderMouse.clickable == true && tileAbove.clickable == true /*&& tileLeft.clickable == true && tileAboveLeft.clickable == true*/) 
 			{
 				tileUnderMouse.clickable = false;
 				tileAbove.clickable = false;
-				tileLeft.clickable = false;
-				tileAboveLeft.clickable = false;
+			//	tileLeft.clickable = false;
+			//	tileAboveLeft.clickable = false;
 
 				tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
 				tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
-				tileLeft.GetComponent<MeshRenderer> ().material.color = Color.white;
-				tileAboveLeft.GetComponent<MeshRenderer> ().material.color = Color.white;
+				/*tileLeft.GetComponent<MeshRenderer> ().material.color = Color.white;
+				tileAboveLeft.GetComponent<MeshRenderer> ().material.color = Color.white;*/
 
-				Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+				GameObject obj=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+
+				//Calculate distance from camera and assign a value?
+				Vector3 distanceVec=Camera.main.transform.position-obj.transform.position;
+				//Does this fix it????????????? or do we need to multiply the magnitude and the maxBuildDistance to get rid of errors
+				int sortOrder=maxBuildDistance-(int)distanceVec.magnitude;
+
+				Debug.Log ("Distance "+distanceVec.magnitude.ToString());
+				obj.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
+
 				gameData.money -= waterMoneyCost;
 				gameData.pollutionLevel += waterPollutionCost;
 			}
@@ -110,7 +134,15 @@ public class MouseManager : MonoBehaviour
 				tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
 				tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
 
-				Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+				GameObject obj=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+
+				//Calculate distance from camera and assign a value?
+				Vector3 distanceVec=Camera.main.transform.position-obj.transform.position;
+				//Does this fix it????????????? or do we need to multiply the magnitude and the maxBuildDistance to get rid of errors
+				int sortOrder=maxBuildDistance-(int)distanceVec.magnitude;
+
+				Debug.Log ("Distance "+distanceVec.magnitude.ToString());
+				obj.GetComponent<SpriteRenderer> ().sortingOrder =sortOrder;
 
 				gameData.money -= scienceMoneyCost;
 				gameData.pollutionLevel += sciencePollutionCost;
@@ -123,7 +155,15 @@ public class MouseManager : MonoBehaviour
                 tileUnderMouse.clickable = false;
                 tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
 
-                Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+				GameObject obj=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+
+				//Calculate distance from camera and assign a value?
+				Vector3 distanceVec=Camera.main.transform.position-obj.transform.position;
+				//Does this fix it????????????? or do we need to multiply the magnitude and the maxBuildDistance to get rid of errors
+				int sortOrder=maxBuildDistance-(int)distanceVec.magnitude;
+
+				Debug.Log ("Distance "+distanceVec.magnitude.ToString());
+				obj.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
 
                 gameData.money -= towerMoneyCost;
                 gameData.pollutionLevel += towerPollutionCost;
@@ -140,11 +180,40 @@ public class MouseManager : MonoBehaviour
             {
                 sellButton.onClick.AddListener(delegate { SellBuilding(ourHitObject); });
 
+				upgradeButton.onClick.AddListener (delegate {upgradeBuilding (ourHitObject);});
+
                 toggleUI.GetComponent<Canvas>().enabled = true;
                 Debug.Log("Click");
             }
         }
     }
+
+	public void upgradeBuilding(GameObject ourHitObject)
+	{
+
+		if (ourHitObject != null)
+		{
+			if (ourHitObject.tag == "Factory")
+			{
+				ourHitObject.GetComponent<SpriteRenderer> ().sprite = factoryUpgrade.GetComponent<SpriteRenderer> ().sprite;
+				ourHitObject.transform.position = new Vector3 (ourHitObject.transform.position.x + 0.50f, ourHitObject.transform.position.y, ourHitObject.transform.position.z + 0.5f);
+			}
+			if (ourHitObject.tag == "Tower")
+			{
+			
+			}
+			if (ourHitObject.tag == "Science Building")
+			{
+			
+			}
+			if (ourHitObject.tag == "Water Tower")
+			{
+			
+			}
+		}
+		
+	}
+
 
     public void SellBuilding(GameObject ourHitObject)
     {
