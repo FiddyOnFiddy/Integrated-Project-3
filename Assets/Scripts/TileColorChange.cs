@@ -15,6 +15,7 @@ public class TileColorChange : MonoBehaviour
 	MeshRenderer mr3;
 	MeshRenderer mr4;
 
+	public BuildingData buildingData;
 
     public bool clickable = true;
 
@@ -30,6 +31,7 @@ public class TileColorChange : MonoBehaviour
 		tileLeftClickable = tileLeft.GetComponent<TileColorChange> ();
 		tileAboveLeftClickable = tileLeft.GetComponent<TileColorChange> ();
 */
+
 
         mr = this.gameObject.GetComponent<MeshRenderer>();
     }

@@ -32,6 +32,18 @@ public class MouseManager : MonoBehaviour
 	public GameObject scienceBuildingUpgrade;
 	public GameObject factoryUpgrade;
 
+	public GameObject buildingToPlace;
+
+	public BuildingData buildingData;
+
+	TileColorChange tileUnderMouse;
+	TileColorChange tileAbove;
+	TileColorChange tileLeft;
+	TileColorChange tileAboveLeft;
+
+	public SpriteRenderer buildingToUpgrade;
+
+
 	// Use this for initialization
 	void Start () 
     {
@@ -42,6 +54,7 @@ public class MouseManager : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
+
         if(EventSystem.current.IsPointerOverGameObject())
         {
             return;
@@ -66,17 +79,15 @@ public class MouseManager : MonoBehaviour
     void SpawnBuilding(GameObject ourHitObject)
     {
         BuildingManager bm = GameObject.FindObjectOfType<BuildingManager>();
-       
 
-        if (Input.GetMouseButtonUp(0) && ourHitObject.tag == "Tile" )
+        if (Input.GetMouseButtonUp(0) && ourHitObject.tag == "Tile")
         {
-			TileColorChange tileUnderMouse = ourHitObject.GetComponent<TileColorChange>();
-			TileColorChange tileAbove = tileUnderMouse.tileAbove.GetComponent<TileColorChange> ();
-			TileColorChange tileLeft = tileUnderMouse.tileLeft.GetComponent<TileColorChange> ();
-			TileColorChange tileAboveLeft = tileUnderMouse.tileAboveLeft.GetComponent<TileColorChange> ();
+			tileUnderMouse = ourHitObject.GetComponent<TileColorChange>();
+			tileAbove = tileUnderMouse.tileAbove.GetComponent<TileColorChange> ();
+			tileLeft = tileUnderMouse.tileLeft.GetComponent<TileColorChange> ();
+			tileAboveLeft = tileUnderMouse.tileAboveLeft.GetComponent<TileColorChange> ();
 
-
-			if(bm.selectedBuilding.tag == "Factory" && tileUnderMouse.tileAbove != null && tileUnderMouse.clickable == true && tileAbove.clickable == true )
+			if(bm.selectedBuilding.tag == "Factory" && tileUnderMouse.tileAbove != null && tileUnderMouse.clickable == true && tileAbove.clickable == true)
             {
                 tileUnderMouse.clickable = false;
 				tileAbove.clickable = false;
@@ -85,42 +96,51 @@ public class MouseManager : MonoBehaviour
 				tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
 
 
-				GameObject obj=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+				buildingToPlace=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+
+				buildingData = buildingToPlace.GetComponent<BuildingData> ();
+
+				buildingData.tileUnderMouse = tileUnderMouse;
+				buildingData.tileAbove = tileAbove;
+
 
 				//Calculate distance from camera and assign a value?
-				Vector3 distanceVec=Camera.main.transform.position-obj.transform.position;
+				Vector3 distanceVec=Camera.main.transform.position-buildingToPlace.transform.position;
 				//Does this fix it????????????? or do we need to multiply the magnitude and the maxBuildDistance to get rid of errors
 				int sortOrder=maxBuildDistance-(int)distanceVec.magnitude;
 
 				Debug.Log ("Distance "+distanceVec.magnitude.ToString());
-				obj.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
+				buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
 
                 gameData.money -= factoryMoneyCost;
                 gameData.pollutionLevel += factoryPollutionCost;
                 
             }
 
-			if (bm.selectedBuilding.tag == "Water Tower" && tileUnderMouse.tileAbove != null && tileUnderMouse.clickable == true && tileAbove.clickable == true /*&& tileLeft.clickable == true && tileAboveLeft.clickable == true*/) 
+			if (bm.selectedBuilding.tag == "Water Tower" && tileUnderMouse.tileAbove != null && tileUnderMouse.clickable == true && tileAbove.clickable == true) 
 			{
 				tileUnderMouse.clickable = false;
 				tileAbove.clickable = false;
-			//	tileLeft.clickable = false;
-			//	tileAboveLeft.clickable = false;
 
 				tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
 				tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
-				/*tileLeft.GetComponent<MeshRenderer> ().material.color = Color.white;
-				tileAboveLeft.GetComponent<MeshRenderer> ().material.color = Color.white;*/
 
-				GameObject obj=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+				buildingToPlace=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+
+				buildingData = buildingToPlace.GetComponent<BuildingData> ();
+
+				buildingData.tileUnderMouse = tileUnderMouse;
+				buildingData.tileAbove = tileAbove;
+				buildingData.tileLeft = tileLeft;
+				buildingData.tileAboveLeft = tileAboveLeft;
 
 				//Calculate distance from camera and assign a value?
-				Vector3 distanceVec=Camera.main.transform.position-obj.transform.position;
+				Vector3 distanceVec=Camera.main.transform.position-buildingToPlace.transform.position;
 				//Does this fix it????????????? or do we need to multiply the magnitude and the maxBuildDistance to get rid of errors
 				int sortOrder=maxBuildDistance-(int)distanceVec.magnitude;
 
 				Debug.Log ("Distance "+distanceVec.magnitude.ToString());
-				obj.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
+				buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
 
 				gameData.money -= waterMoneyCost;
 				gameData.pollutionLevel += waterPollutionCost;
@@ -134,15 +154,20 @@ public class MouseManager : MonoBehaviour
 				tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
 				tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
 
-				GameObject obj=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+				buildingToPlace=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+
+				buildingData = buildingToPlace.GetComponent<BuildingData> ();
+
+				buildingData.tileUnderMouse = tileUnderMouse;
+				buildingData.tileAbove = tileAbove;
 
 				//Calculate distance from camera and assign a value?
-				Vector3 distanceVec=Camera.main.transform.position-obj.transform.position;
+				Vector3 distanceVec=Camera.main.transform.position-buildingToPlace.transform.position;
 				//Does this fix it????????????? or do we need to multiply the magnitude and the maxBuildDistance to get rid of errors
 				int sortOrder=maxBuildDistance-(int)distanceVec.magnitude;
 
 				Debug.Log ("Distance "+distanceVec.magnitude.ToString());
-				obj.GetComponent<SpriteRenderer> ().sortingOrder =sortOrder;
+				buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder =sortOrder;
 
 				gameData.money -= scienceMoneyCost;
 				gameData.pollutionLevel += sciencePollutionCost;
@@ -150,20 +175,24 @@ public class MouseManager : MonoBehaviour
 
 
 
-			if(bm.selectedBuilding.tag == "Tower" && tileUnderMouse.clickable == true)
+			if(bm.selectedBuilding.tag == "Tower" && tileUnderMouse.clickable == true )
             {
                 tileUnderMouse.clickable = false;
                 tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
 
-				GameObject obj=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+				buildingToPlace=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+
+				buildingData = buildingToPlace.GetComponent<BuildingData> ();
+
+				buildingData.tileUnderMouse = tileUnderMouse;
 
 				//Calculate distance from camera and assign a value?
-				Vector3 distanceVec=Camera.main.transform.position-obj.transform.position;
+				Vector3 distanceVec=Camera.main.transform.position-buildingToPlace.transform.position;
 				//Does this fix it????????????? or do we need to multiply the magnitude and the maxBuildDistance to get rid of errors
 				int sortOrder=maxBuildDistance-(int)distanceVec.magnitude;
 
 				Debug.Log ("Distance "+distanceVec.magnitude.ToString());
-				obj.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
+				buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
 
                 gameData.money -= towerMoneyCost;
                 gameData.pollutionLevel += towerPollutionCost;
@@ -178,7 +207,7 @@ public class MouseManager : MonoBehaviour
         {
             if(ourHitObject.tag == "Factory" || ourHitObject.tag == "Tower" || ourHitObject.tag == "Science Building" || ourHitObject.tag == "Water Tower")
             {
-                sellButton.onClick.AddListener(delegate { SellBuilding(ourHitObject); });
+	            sellButton.onClick.AddListener(delegate { SellBuilding(ourHitObject); });
 
 				upgradeButton.onClick.AddListener (delegate {upgradeBuilding (ourHitObject);});
 
@@ -190,25 +219,48 @@ public class MouseManager : MonoBehaviour
 
 	public void upgradeBuilding(GameObject ourHitObject)
 	{
+		buildingData = ourHitObject.GetComponent<BuildingData> ();
+		buildingToUpgrade = ourHitObject.GetComponent<SpriteRenderer> ();
+		
 
-		if (ourHitObject != null)
+		if (ourHitObject != null && buildingData.upgraded == false)
 		{
 			if (ourHitObject.tag == "Factory")
 			{
-				ourHitObject.GetComponent<SpriteRenderer> ().sprite = factoryUpgrade.GetComponent<SpriteRenderer> ().sprite;
-				ourHitObject.transform.position = new Vector3 (ourHitObject.transform.position.x + 0.50f, ourHitObject.transform.position.y, ourHitObject.transform.position.z + 0.5f);
+				buildingToUpgrade.sprite = factoryUpgrade.GetComponent<SpriteRenderer> ().sprite;
+				buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x + 0.50f, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z + 0.5f);
+				buildingData.upgraded = true;
 			}
 			if (ourHitObject.tag == "Tower")
 			{
-			
+				buildingToUpgrade.sprite = towerUpgrade.GetComponent<SpriteRenderer> ().sprite;
+				buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z);
+				buildingData.upgraded = true;
 			}
 			if (ourHitObject.tag == "Science Building")
 			{
-			
+				buildingToUpgrade.sprite = scienceBuildingUpgrade.GetComponent<SpriteRenderer> ().sprite;
+				buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x + 0.25f, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z + 0.25f);
+				buildingData.upgraded = true;
 			}
 			if (ourHitObject.tag == "Water Tower")
 			{
-			
+				buildingToUpgrade.sprite = waterPlantUpgrade.GetComponent<SpriteRenderer> ().sprite;
+				buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z + 0.5f);
+				buildingData.upgraded = true;
+
+				if (buildingData.upgraded == true )
+				{
+					if (tileLeft.clickable == true && tileAboveLeft.clickable == true)
+					{
+						buildingData.tileLeft.clickable = false;
+						buildingData.tileAboveLeft.clickable = false;
+
+						buildingData.tileLeft.GetComponent<MeshRenderer> ().material.color = Color.white;
+						buildingData.tileAboveLeft.GetComponent<MeshRenderer> ().material.color = Color.white;
+					}
+
+				}
 			}
 		}
 		
@@ -220,7 +272,7 @@ public class MouseManager : MonoBehaviour
         //Get tile at building or tiles if wide building and change clickable to true.
         toggleUI.GetComponent<Canvas>().enabled = false;
 
-
+		buildingData = ourHitObject.GetComponent<BuildingData> ();
 
         if (ourHitObject != null)
         {
@@ -231,6 +283,10 @@ public class MouseManager : MonoBehaviour
 				Debug.Log ("Tile under building is: " + tileAtBUilding.name);
                 gameData.money += factoryMoneyCost;
                 gameData.pollutionLevel -= factoryPollutionCost;
+
+				buildingData.tileUnderMouse.clickable = true;
+				buildingData.tileAbove.clickable = true;
+
                 Destroy(ourHitObject);
 
             }
@@ -238,18 +294,29 @@ public class MouseManager : MonoBehaviour
             {
                 gameData.money += towerMoneyCost;
                 gameData.pollutionLevel -= towerPollutionCost;
+				buildingData.tileUnderMouse.clickable = true;
                 Destroy(ourHitObject);
             }
             if (ourHitObject.tag == "Science Building")
             {
                 gameData.money += scienceMoneyCost;
                 gameData.pollutionLevel -= sciencePollutionCost;
+
+				buildingData.tileUnderMouse.clickable = true;
+				buildingData.tileAbove.clickable = true;
+
                 Destroy(ourHitObject);
             }
             if (ourHitObject.tag == "Water Tower")
             {
                 gameData.money += waterMoneyCost;
                 gameData.pollutionLevel -= waterPollutionCost;
+
+				buildingData.tileUnderMouse.clickable = true;
+				buildingData.tileAbove.clickable = true;
+				buildingData.tileLeft.clickable = true;
+				buildingData.tileAboveLeft.clickable = true;
+
                 Destroy(ourHitObject);
             }
         }
