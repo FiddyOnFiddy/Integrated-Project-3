@@ -43,6 +43,8 @@ public class MouseManager : MonoBehaviour
 
 	public SpriteRenderer buildingToUpgrade;
 
+	public CameraSwitcher cameraSwitcher;
+
 
 	// Use this for initialization
 	void Start () 
