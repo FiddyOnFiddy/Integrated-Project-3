@@ -207,8 +207,10 @@ public class MouseManager : MonoBehaviour
         {
             if(ourHitObject.tag == "Factory" || ourHitObject.tag == "Tower" || ourHitObject.tag == "Science Building" || ourHitObject.tag == "Water Tower")
             {
+				sellButton.onClick.RemoveAllListeners ();
 	            sellButton.onClick.AddListener(delegate { SellBuilding(ourHitObject); });
 
+				upgradeButton.onClick.RemoveAllListeners ();
 				upgradeButton.onClick.AddListener (delegate {upgradeBuilding (ourHitObject);});
 
                 toggleUI.GetComponent<Canvas>().enabled = true;
@@ -219,47 +221,51 @@ public class MouseManager : MonoBehaviour
 
 	public void upgradeBuilding(GameObject ourHitObject)
 	{
-		buildingData = ourHitObject.GetComponent<BuildingData> ();
-		buildingToUpgrade = ourHitObject.GetComponent<SpriteRenderer> ();
-		
-
-		if (ourHitObject != null && buildingData.upgraded == false)
+		if (ourHitObject != null)
 		{
-			if (ourHitObject.tag == "Factory")
-			{
-				buildingToUpgrade.sprite = factoryUpgrade.GetComponent<SpriteRenderer> ().sprite;
-				buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x + 0.50f, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z + 0.5f);
-				buildingData.upgraded = true;
-			}
-			if (ourHitObject.tag == "Tower")
-			{
-				buildingToUpgrade.sprite = towerUpgrade.GetComponent<SpriteRenderer> ().sprite;
-				buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z);
-				buildingData.upgraded = true;
-			}
-			if (ourHitObject.tag == "Science Building")
-			{
-				buildingToUpgrade.sprite = scienceBuildingUpgrade.GetComponent<SpriteRenderer> ().sprite;
-				buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x + 0.25f, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z + 0.25f);
-				buildingData.upgraded = true;
-			}
-			if (ourHitObject.tag == "Water Tower")
-			{
-				buildingToUpgrade.sprite = waterPlantUpgrade.GetComponent<SpriteRenderer> ().sprite;
-				buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z + 0.5f);
-				buildingData.upgraded = true;
+			buildingToUpgrade = ourHitObject.GetComponent<SpriteRenderer> ();
+			buildingData = ourHitObject.GetComponent<BuildingData> ();
 
-				if (buildingData.upgraded == true )
+
+			if (buildingData.upgraded == false)
+			{		
+			
+				if (ourHitObject.tag == "Factory")
 				{
-					if (tileLeft.clickable == true && tileAboveLeft.clickable == true)
+					buildingToUpgrade.sprite = factoryUpgrade.GetComponent<SpriteRenderer> ().sprite;
+					buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x + 0.50f, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z + 0.5f);
+					buildingData.upgraded = true;
+				}
+				if (ourHitObject.tag == "Tower")
+				{
+					buildingToUpgrade.sprite = towerUpgrade.GetComponent<SpriteRenderer> ().sprite;
+					buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z);
+					buildingData.upgraded = true;
+				}
+				if (ourHitObject.tag == "Science Building")
+				{
+					buildingToUpgrade.sprite = scienceBuildingUpgrade.GetComponent<SpriteRenderer> ().sprite;
+					buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x + 0.25f, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z + 0.25f);
+					buildingData.upgraded = true;
+				}
+				if (ourHitObject.tag == "Water Tower")
+				{
+					buildingToUpgrade.sprite = waterPlantUpgrade.GetComponent<SpriteRenderer> ().sprite;
+					buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z + 0.5f);
+					buildingData.upgraded = true;
+
+					if (buildingData.upgraded == true)
 					{
-						buildingData.tileLeft.clickable = false;
-						buildingData.tileAboveLeft.clickable = false;
+						if (tileLeft.clickable == true && tileAboveLeft.clickable == true)
+						{
+							buildingData.tileLeft.clickable = false;
+							buildingData.tileAboveLeft.clickable = false;
 
-						buildingData.tileLeft.GetComponent<MeshRenderer> ().material.color = Color.white;
-						buildingData.tileAboveLeft.GetComponent<MeshRenderer> ().material.color = Color.white;
+							buildingData.tileLeft.GetComponent<MeshRenderer> ().material.color = Color.white;
+							buildingData.tileAboveLeft.GetComponent<MeshRenderer> ().material.color = Color.white;
+						}
+
 					}
-
 				}
 			}
 		}
@@ -272,15 +278,13 @@ public class MouseManager : MonoBehaviour
         //Get tile at building or tiles if wide building and change clickable to true.
         toggleUI.GetComponent<Canvas>().enabled = false;
 
-		buildingData = ourHitObject.GetComponent<BuildingData> ();
 
         if (ourHitObject != null)
         {
+			buildingData = ourHitObject.GetComponent<BuildingData> ();
 
             if (ourHitObject.tag == "Factory")
             {
-				GameObject tileAtBUilding = GameObject.Find("Tile: " + (ourHitObject.transform.position.x - 0.25) + "_" + (ourHitObject.transform.position.z + 0.25));
-				Debug.Log ("Tile under building is: " + tileAtBUilding.name);
                 gameData.money += factoryMoneyCost;
                 gameData.pollutionLevel -= factoryPollutionCost;
 
