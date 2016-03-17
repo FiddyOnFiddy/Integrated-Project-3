@@ -6,11 +6,6 @@ using UnityEngine.Events;
 
 public class MouseManager : MonoBehaviour 
 {
-    public GameObject placeableTile;
-    public float xOffset = -0.25f;
-    public float yOffSet = 1.0f;
-    public float zOffset = -0.25f;
-
     public Button sellButton;
     public Button upgradeButton;
     public toggleUIScript toggleUI;
@@ -45,17 +40,26 @@ public class MouseManager : MonoBehaviour
 
 	public CameraSwitcher cameraSwitcher;
 
+    public RectTransform pollutionBar;
+    Vector2 pollutionBarWidthHeight;
+
+
 
 	// Use this for initialization
 	void Start () 
     {
         findBuildingUIButtons();
         gameData = GameObject.FindObjectOfType<GameData>();
+
+
+
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
+        pollutionBarWidthHeight = pollutionBar.sizeDelta;
+
 
         if(EventSystem.current.IsPointerOverGameObject())
         {
@@ -73,6 +77,7 @@ public class MouseManager : MonoBehaviour
             DetectBuilding(ourHitObject);
             SpawnBuilding(ourHitObject);
           //  Debug.Log("Raycast hit: " + ourHitObject.name);
+            Debug.DrawRay(ray.origin, ray.direction * 1000.0f, Color.white);
             
         }
 	
@@ -115,6 +120,7 @@ public class MouseManager : MonoBehaviour
 				buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
 
                 gameData.money -= factoryMoneyCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - factoryPollutionCost, pollutionBarWidthHeight.y);
                 gameData.pollutionLevel += factoryPollutionCost;
                 
             }
@@ -144,8 +150,11 @@ public class MouseManager : MonoBehaviour
 				Debug.Log ("Distance "+distanceVec.magnitude.ToString());
 				buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
 
-				gameData.money -= waterMoneyCost;
-				gameData.pollutionLevel += waterPollutionCost;
+                gameData.money -= waterMoneyCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - waterPollutionCost, pollutionBarWidthHeight.y);
+                gameData.pollutionLevel -= waterPollutionCost;
+
+                Debug.Log(pollutionBar.sizeDelta);
 			}
 
 			if (bm.selectedBuilding.tag == "Science Building" && tileUnderMouse.tileAbove != null && tileUnderMouse.clickable == true && tileAbove.clickable == true) 
@@ -172,6 +181,7 @@ public class MouseManager : MonoBehaviour
 				buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder =sortOrder;
 
 				gameData.money -= scienceMoneyCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - sciencePollutionCost, pollutionBarWidthHeight.y);
 				gameData.pollutionLevel += sciencePollutionCost;
 			}
 
@@ -197,9 +207,46 @@ public class MouseManager : MonoBehaviour
 				buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
 
                 gameData.money -= towerMoneyCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - towerPollutionCost, pollutionBarWidthHeight.y);
+
                 gameData.pollutionLevel += towerPollutionCost;
 
             }
+
+            if (bm.selectedBuilding.tag == "Church" && tileUnderMouse != null && tileUnderMouse.clickable == true && tileAbove.clickable == true && tileAbove.tileAbove.GetComponent<TileColorChange>().clickable == true && tileAbove.tileAbove.GetComponent<TileColorChange>().tileAbove.GetComponent<TileColorChange>().clickable == true && tileAbove.tileAbove.GetComponent<TileColorChange>().tileAbove.GetComponent<TileColorChange>().tileAbove.GetComponent<TileColorChange>().clickable == true)
+            {
+                tileUnderMouse.clickable = false;
+                tileAbove.clickable = false;
+                tileAbove.tileAbove.GetComponent<TileColorChange>().clickable = false;
+                tileAbove.tileAbove.GetComponent<TileColorChange>().tileAbove.GetComponent<TileColorChange>().clickable = false;
+                tileAbove.tileAbove.GetComponent<TileColorChange>().tileAbove.GetComponent<TileColorChange>().tileAbove.GetComponent<TileColorChange>().clickable = false;
+
+
+                tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
+                tileAbove.GetComponent<MeshRenderer>().material.color = Color.white;
+
+
+                buildingToPlace=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+
+                buildingData = buildingToPlace.GetComponent<BuildingData> ();
+
+                buildingData.tileUnderMouse = tileUnderMouse;
+                buildingData.tileAbove = tileAbove;
+
+                //Calculate distance from camera and assign a value?
+                Vector3 distanceVec=Camera.main.transform.position-buildingToPlace.transform.position;
+                //Does this fix it????????????? or do we need to multiply the magnitude and the maxBuildDistance to get rid of errors
+                int sortOrder=maxBuildDistance-(int)distanceVec.magnitude;
+
+                Debug.Log ("Distance "+distanceVec.magnitude.ToString());
+                buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder =sortOrder;
+
+                gameData.money -= scienceMoneyCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - sciencePollutionCost, pollutionBarWidthHeight.y);
+
+                gameData.pollutionLevel += sciencePollutionCost;
+            }
+
         }
     }
 
@@ -207,7 +254,7 @@ public class MouseManager : MonoBehaviour
     {
         if(Input.GetMouseButtonUp(0))
         {
-            if(ourHitObject.tag == "Factory" || ourHitObject.tag == "Tower" || ourHitObject.tag == "Science Building" || ourHitObject.tag == "Water Tower")
+            if(ourHitObject.tag == "Factory" || ourHitObject.tag == "Tower" || ourHitObject.tag == "Science Building" || ourHitObject.tag == "Water Tower" || ourHitObject.tag == "Church")
             {
 				sellButton.onClick.RemoveAllListeners ();
 	            sellButton.onClick.AddListener(delegate { SellBuilding(ourHitObject); });
@@ -288,6 +335,8 @@ public class MouseManager : MonoBehaviour
             if (ourHitObject.tag == "Factory")
             {
                 gameData.money += factoryMoneyCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - factoryPollutionCost, pollutionBarWidthHeight.y);
+
                 gameData.pollutionLevel -= factoryPollutionCost;
 
 				buildingData.tileUnderMouse.clickable = true;
@@ -299,14 +348,20 @@ public class MouseManager : MonoBehaviour
             if (ourHitObject.tag == "Tower")
             {
                 gameData.money += towerMoneyCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - towerPollutionCost, pollutionBarWidthHeight.y);
+
                 gameData.pollutionLevel -= towerPollutionCost;
+
 				buildingData.tileUnderMouse.clickable = true;
                 Destroy(ourHitObject);
             }
             if (ourHitObject.tag == "Science Building")
             {
                 gameData.money += scienceMoneyCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - sciencePollutionCost, pollutionBarWidthHeight.y);
+
                 gameData.pollutionLevel -= sciencePollutionCost;
+
 
 				buildingData.tileUnderMouse.clickable = true;
 				buildingData.tileAbove.clickable = true;
@@ -316,7 +371,10 @@ public class MouseManager : MonoBehaviour
             if (ourHitObject.tag == "Water Tower")
             {
                 gameData.money += waterMoneyCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - waterPollutionCost, pollutionBarWidthHeight.y);
+
                 gameData.pollutionLevel -= waterPollutionCost;
+
 
 				buildingData.tileUnderMouse.clickable = true;
 				buildingData.tileAbove.clickable = true;
