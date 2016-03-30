@@ -26,16 +26,24 @@ public class MouseManager : MonoBehaviour
 	public GameObject waterPlantUpgrade;
 	public GameObject scienceBuildingUpgrade;
 	public GameObject factoryUpgrade;
+    public GameObject cleanFactoryUpgrade;
 
 	public GameObject buildingToPlace;
 
 	public BuildingData buildingData;
 
-	TileColorChange tileUnderMouse;
-	TileColorChange tile1Up;
-	TileColorChange tileLeft;
-	TileColorChange tile1UpLeft;
-    TileColorChange tile1UpAbove;
+	public TileColorChange tileUnderMouse;
+	public TileColorChange tileUp1;
+    public TileColorChange tileUp2;
+    public TileColorChange tileUp3;
+    public TileColorChange tileUp4;
+
+    public TileColorChange tileLeft;
+    public TileColorChange tileLeftUp1;
+    public TileColorChange tileLeftUp2;
+    public TileColorChange tileLeftUp3;
+    public TileColorChange tileLeftUp4;
+
 
 	public SpriteRenderer buildingToUpgrade;
 
@@ -92,26 +100,107 @@ public class MouseManager : MonoBehaviour
         {
 			tileUnderMouse = ourHitObject.GetComponent<TileColorChange>();
 
-            if (tileUnderMouse.tile1Up != null)
+            if (tileUnderMouse.tileUp1 != null)
             {
-                tile1Up = tileUnderMouse.tile1Up.GetComponent<TileColorChange>();
+                tileUp1 = tileUnderMouse.tileUp1.GetComponent<TileColorChange>();
             }
+            if (tileUnderMouse.tileUp2 != null)
+            {
+                tileUp2 = tileUnderMouse.tileUp2.GetComponent<TileColorChange>();
+            }
+            if (tileUnderMouse.tileUp3 != null)
+            {
+                tileUp3 = tileUnderMouse.tileUp3.GetComponent<TileColorChange>();
+            }
+            if (tileUnderMouse.tileUp4 != null)
+            {
+                tileUp4 = tileUnderMouse.tileUp4.GetComponent<TileColorChange>();
+            }
+
+
             if(tileUnderMouse.tileLeft != null)
             {
                 tileLeft = tileUnderMouse.tileLeft.GetComponent<TileColorChange>();
             }
-            if (tileUnderMouse.tile1UpLeft != null)
+            if (tileUnderMouse.tileLeftUp1 != null)
             {
-                tile1UpLeft = tileUnderMouse.tile1UpLeft.GetComponent<TileColorChange>();
+                tileLeftUp1 = tileUnderMouse.tileLeftUp1.GetComponent<TileColorChange>();
             }
-                
-			if(bm.selectedBuilding.tag == "Factory" && tileUnderMouse.tile1Up != null && tileUnderMouse.clickable == true && tile1Up.clickable == true)
+            if (tileUnderMouse.tileLeftUp2 != null)
+            {
+                tileLeftUp2 = tileUnderMouse.tileLeftUp2.GetComponent<TileColorChange>();
+            }
+            if (tileUnderMouse.tileLeftUp3 != null)
+            {
+                tileLeftUp3 = tileUnderMouse.tileLeftUp3.GetComponent<TileColorChange>();
+            }
+            if (tileUnderMouse.tileLeftUp4 != null)
+            {
+                tileLeftUp4 = tileUnderMouse.tileLeftUp4.GetComponent<TileColorChange>();
+            }
+
+            if (bm.selectedBuilding.tag == "Clean Factory" && tileUnderMouse.clickable == true && tileUp1 != null && tileUp1.clickable == true && tileUp2 != null && tileUp2.clickable == true && tileUp3 != null && tileUp3.clickable == true && tileUp4 != null && tileUp4.clickable == true)
             {
                 tileUnderMouse.clickable = false;
-				tile1Up.clickable = false;
+                tileUp1.clickable = false;
+                tileUp2.clickable = false;
+                tileUp3.clickable = false;
+                tileUp4.clickable = false;
+
+                tileLeft.clickable = false;
+                tileLeftUp1.clickable = false;
+                tileLeftUp2.clickable = false;
+                tileLeftUp3.clickable = false;
+                tileLeftUp4.clickable = false;
 
                 tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
-				tile1Up.GetComponent<MeshRenderer>().material.color = Color.white;
+                tileUp1.GetComponent<MeshRenderer>().material.color = Color.white;
+                tileUp2.GetComponent<MeshRenderer>().material.color = Color.white;
+                tileUp3.GetComponent<MeshRenderer>().material.color = Color.white;
+                tileUp4.GetComponent<MeshRenderer>().material.color = Color.white;
+
+                tileLeft.GetComponent<MeshRenderer>().material.color = Color.white;
+                tileLeftUp1.GetComponent<MeshRenderer>().material.color = Color.white;
+                tileLeftUp2.GetComponent<MeshRenderer>().material.color = Color.white;
+                tileLeftUp3.GetComponent<MeshRenderer>().material.color = Color.white;
+                tileLeftUp4.GetComponent<MeshRenderer>().material.color = Color.white;
+
+                buildingToPlace=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
+
+                buildingData = buildingToPlace.GetComponent<BuildingData>();
+
+                buildingData.tileUnderMouse = tileUnderMouse;
+                buildingData.tileUp1 = tileUp1;
+                buildingData.tileUp2 = tileUp2;
+                buildingData.tileUp3 = tileUp3;
+                buildingData.tileUp4 = tileUp4;
+
+                buildingData.tileLeft = tileLeft;
+                buildingData.tileLeftUp1 = tileLeftUp1;
+                buildingData.tileLeftUp2 = tileLeftUp2;
+                buildingData.tileLeftUp3 = tileLeftUp3;
+                buildingData.tileLeftUp4 = tileLeftUp4;
+
+                Vector3 distanceVec=Camera.main.transform.position-buildingToPlace.transform.position;
+                //Does this fix it????????????? or do we need to multiply the magnitude and the maxBuildDistance to get rid of errors
+                int sortOrder=maxBuildDistance-(int)distanceVec.magnitude;
+
+                Debug.Log ("Distance "+distanceVec.magnitude.ToString());
+                buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
+
+                gameData.money -= factoryMoneyCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - factoryPollutionCost, pollutionBarWidthHeight.y);
+                gameData.pollutionLevel += factoryPollutionCost;
+
+            }
+                
+			if(bm.selectedBuilding.tag == "Factory" && tileUp1 != null && tileUnderMouse.clickable == true && tileUp1.clickable == true)
+            {
+                tileUnderMouse.clickable = false;
+				tileUp1.clickable = false;
+
+                tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
+				tileUp1.GetComponent<MeshRenderer>().material.color = Color.white;
 
 
 				buildingToPlace=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
@@ -119,7 +208,7 @@ public class MouseManager : MonoBehaviour
 				buildingData = buildingToPlace.GetComponent<BuildingData> ();
 
 				buildingData.tileUnderMouse = tileUnderMouse;
-				buildingData.tile1Up = tile1Up;
+				buildingData.tileUp1 = tileUp1;
 
 
 				//Calculate distance from camera and assign a value?
@@ -136,22 +225,22 @@ public class MouseManager : MonoBehaviour
                 
             }
 
-			if (bm.selectedBuilding.tag == "Water Tower" && tileUnderMouse.tile1Up != null && tileUnderMouse.clickable == true && tile1Up.clickable == true) 
+			if (bm.selectedBuilding.tag == "Water Tower" && tileUnderMouse.tileUp1 != null && tileUnderMouse.clickable == true && tileUp1.clickable == true) 
 			{
                 tileUnderMouse.clickable = false;
-                tile1Up.clickable = false;
+                tileUp1.clickable = false;
 
 				tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
-				tile1Up.GetComponent<MeshRenderer>().material.color = Color.white;
+				tileUp1.GetComponent<MeshRenderer>().material.color = Color.white;
 
 				buildingToPlace=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
 
 				buildingData = buildingToPlace.GetComponent<BuildingData> ();
 
 				buildingData.tileUnderMouse = tileUnderMouse;
-				buildingData.tile1Up = tile1Up;
+				buildingData.tileUp1 = tileUp1;
 				buildingData.tileLeft = tileLeft;
-				buildingData.tile1UpLeft = tile1UpLeft;
+				buildingData.tileLeftUp1 = tileLeftUp1;
 
 				//Calculate distance from camera and assign a value?
 				Vector3 distanceVec=Camera.main.transform.position-buildingToPlace.transform.position;
@@ -168,20 +257,20 @@ public class MouseManager : MonoBehaviour
                 Debug.Log(pollutionBar.sizeDelta);
 			}
 
-			if (bm.selectedBuilding.tag == "Science Building" && tileUnderMouse.tile1Up != null && tileUnderMouse.clickable == true && tile1Up.clickable == true) 
+			if (bm.selectedBuilding.tag == "Science Building" && tileUnderMouse.tileUp1 != null && tileUnderMouse.clickable == true && tileUp1.clickable == true) 
 			{
 				tileUnderMouse.clickable = false;
-				tile1Up.clickable = false;
+				tileUp1.clickable = false;
 
 				tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
-				tile1Up.GetComponent<MeshRenderer>().material.color = Color.white;
+				tileUp1.GetComponent<MeshRenderer>().material.color = Color.white;
 
 				buildingToPlace=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
 
 				buildingData = buildingToPlace.GetComponent<BuildingData> ();
 
 				buildingData.tileUnderMouse = tileUnderMouse;
-				buildingData.tile1Up = tile1Up;
+				buildingData.tileUp1 = tileUp1;
 
 				//Calculate distance from camera and assign a value?
 				Vector3 distanceVec=Camera.main.transform.position-buildingToPlace.transform.position;
@@ -224,17 +313,17 @@ public class MouseManager : MonoBehaviour
 
             }
 
-            if (bm.selectedBuilding.tag == "Church" && tileUnderMouse != null && tileUnderMouse.clickable == true && tile1Up.clickable == true && tile1Up.tile1Up.GetComponent<TileColorChange>().clickable == true && tile1Up.tile1Up.GetComponent<TileColorChange>().tile1Up.GetComponent<TileColorChange>().clickable == true && tile1Up.tile1Up.GetComponent<TileColorChange>().tile1Up.GetComponent<TileColorChange>().tile1Up.GetComponent<TileColorChange>().clickable == true)
+            if (bm.selectedBuilding.tag == "Church" && tileUnderMouse != null && tileUnderMouse.clickable == true && tileUp1.clickable == true && tileUp1.tileUp1.GetComponent<TileColorChange>().clickable == true && tileUp1.tileUp1.GetComponent<TileColorChange>().tileUp1.GetComponent<TileColorChange>().clickable == true && tileUp1.tileUp1.GetComponent<TileColorChange>().tileUp1.GetComponent<TileColorChange>().tileUp1.GetComponent<TileColorChange>().clickable == true)
             {
                 tileUnderMouse.clickable = false;
-                tile1Up.clickable = false;
-                tile1Up.tile1Up.GetComponent<TileColorChange>().clickable = false;
-                tile1Up.tile1Up.GetComponent<TileColorChange>().tile1Up.GetComponent<TileColorChange>().clickable = false;
-                tile1Up.tile1Up.GetComponent<TileColorChange>().tile1Up.GetComponent<TileColorChange>().tile1Up.GetComponent<TileColorChange>().clickable = false;
+                tileUp1.clickable = false;
+                tileUp1.tileUp1.GetComponent<TileColorChange>().clickable = false;
+                tileUp1.tileUp1.GetComponent<TileColorChange>().tileUp1.GetComponent<TileColorChange>().clickable = false;
+                tileUp1.tileUp1.GetComponent<TileColorChange>().tileUp1.GetComponent<TileColorChange>().tileUp1.GetComponent<TileColorChange>().clickable = false;
 
 
                 tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
-                tile1Up.GetComponent<MeshRenderer>().material.color = Color.white;
+                tileUp1.GetComponent<MeshRenderer>().material.color = Color.white;
 
 
                 buildingToPlace=(GameObject)Instantiate(bm.selectedBuilding, new Vector3(ourHitObject.transform.position.x + bm.selectedBuilding.transform.position.x, ourHitObject.transform.position.y + bm.selectedBuilding.transform.position.y, ourHitObject.transform.position.z + bm.selectedBuilding.transform.position.z), bm.selectedBuilding.transform.rotation);
@@ -242,7 +331,7 @@ public class MouseManager : MonoBehaviour
                 buildingData = buildingToPlace.GetComponent<BuildingData> ();
 
                 buildingData.tileUnderMouse = tileUnderMouse;
-                buildingData.tile1Up = tile1Up;
+                buildingData.tileUp1 = tileUp1;
 
                 //Calculate distance from camera and assign a value?
                 Vector3 distanceVec=Camera.main.transform.position-buildingToPlace.transform.position;
@@ -316,13 +405,13 @@ public class MouseManager : MonoBehaviour
 
 					if (buildingData.upgraded == true)
 					{
-						if (tileLeft.clickable == true && tile1UpLeft.clickable == true)
+						if (tileLeft.clickable == true && tileLeftUp1.clickable == true)
 						{
 							buildingData.tileLeft.clickable = false;
-							buildingData.tile1UpLeft.clickable = false;
+							buildingData.tileLeftUp1.clickable = false;
 
 							buildingData.tileLeft.GetComponent<MeshRenderer> ().material.color = Color.white;
-							buildingData.tile1UpLeft.GetComponent<MeshRenderer> ().material.color = Color.white;
+							buildingData.tileLeftUp1.GetComponent<MeshRenderer> ().material.color = Color.white;
 						}
 
 					}
@@ -351,7 +440,7 @@ public class MouseManager : MonoBehaviour
                 gameData.pollutionLevel -= factoryPollutionCost;
 
 				buildingData.tileUnderMouse.clickable = true;
-				buildingData.tile1Up.clickable = true;
+				buildingData.tileUp1.clickable = true;
 
                 Destroy(ourHitObject);
 
@@ -375,7 +464,7 @@ public class MouseManager : MonoBehaviour
 
 
 				buildingData.tileUnderMouse.clickable = true;
-				buildingData.tile1Up.clickable = true;
+				buildingData.tileUp1.clickable = true;
 
                 Destroy(ourHitObject);
             }
@@ -388,9 +477,9 @@ public class MouseManager : MonoBehaviour
 
 
 				buildingData.tileUnderMouse.clickable = true;
-				buildingData.tile1Up.clickable = true;
+				buildingData.tileUp1.clickable = true;
 				buildingData.tileLeft.clickable = true;
-				buildingData.tile1UpLeft.clickable = true;
+				buildingData.tileLeftUp1.clickable = true;
 
                 Destroy(ourHitObject);
             }
