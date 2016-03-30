@@ -10,6 +10,7 @@ public class BuildingData : MonoBehaviour
 	public TileColorChange tileAbove;
 	public TileColorChange tileLeft;
 	public TileColorChange tileAboveLeft;
+    public TileColorChange tileAboveAbove;
 
 	// Use this for initialization
 	void Start () 
