@@ -7,10 +7,12 @@ public class IsoCameraFixScript : MonoBehaviour
     public bool active = false;
     public Vector3 fixPosition = new Vector3(0, 0, 0);
 
+	public CameraSwitcher cameraSwitcher;
+
 	// Use this for initialization
 	void Start ()
     {
-	
+		//cameraSwitcher = GameObject.FindObjectOfType<CameraSwitcher> ();
 	}
 	
 	// Update is called once per frame
@@ -31,7 +33,7 @@ public class IsoCameraFixScript : MonoBehaviour
     {
         if(fix)
         {
-            this.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward) * Quaternion.Euler (fixPosition);
+			this.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward) * Quaternion.Euler (fixPosition);
         }
     }
 }

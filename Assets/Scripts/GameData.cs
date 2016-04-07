@@ -19,8 +19,8 @@ public class GameData : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        moneyText.text = "Money: $" + money.ToString();
-        pollutionText.text = "Pollution: " + pollutionLevel.ToString() + "%";
+        moneyText.text = "    $" + money.ToString();
+        pollutionText.text = "Pollution: ";
 	}
 
 }
