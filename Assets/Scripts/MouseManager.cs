@@ -11,7 +11,7 @@ public class MouseManager : MonoBehaviour
     public toggleUIScript toggleUI;
     public GameData gameData;
 
-    public int factoryPollutionCost = 30;
+    public int factoryPollutionCost = 5;
     public int factoryMoneyCost = 30;
     public int towerPollutionCost = 10;
     public int towerMoneyCost = 20;
@@ -20,13 +20,14 @@ public class MouseManager : MonoBehaviour
     public int waterPollutionCost = 10;
     public int waterMoneyCost = 30;
     public int cleanFactoryMoneyCost = 40;
-    public int clearnFactoryPollutionCost = 30;
+    public int cleanFactoryPollutionCost = 30;
     public int windTurbineMoneyCost = 30;
     public int windTurbinePollutionCost = 40;
     public int solarPanelMoneyCost = 30;
     public int solarPanelPollutionCost = 5;
+    public float pollutionTimer = 1;
 
-	public int maxBuildDistance =40;
+	public int maxBuildDistance = 40;
 
 	public GameObject towerUpgrade;
 	public GameObject waterPlantUpgrade;
@@ -50,6 +51,7 @@ public class MouseManager : MonoBehaviour
     public TileColorChange tileLeftUp3;
     public TileColorChange tileLeftUp4;
 
+    public float timeLeft = 1.0f;
 
 	public SpriteRenderer buildingToUpgrade;
 
@@ -74,6 +76,16 @@ public class MouseManager : MonoBehaviour
 	void Update () 
     {
         pollutionBarWidthHeight = pollutionBar.sizeDelta;
+
+        timeLeft -= Time.deltaTime;
+
+        if (timeLeft <= 0)
+        {
+            gameData.pollutionLevel += 1;
+            pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x += 1, pollutionBarWidthHeight.y);
+            timeLeft = 1.0f;
+
+        }
 
 
         if(EventSystem.current.IsPointerOverGameObject())
@@ -144,7 +156,7 @@ public class MouseManager : MonoBehaviour
                 tileLeftUp4 = tileUnderMouse.tileLeftUp4.GetComponent<TileColorChange>();
             }
 
-            if (bm.selectedBuilding.tag == "Clean Factory" && tileUnderMouse.clickable == true && tileUp1 != null && tileUp1.clickable == true && tileUp2 != null && tileUp2.clickable == true && tileUp3 != null && tileUp3.clickable == true && tileUp4 != null && tileUp4.clickable == true)
+            if (bm.selectedBuilding.tag == "Clean Factory" && tileUnderMouse.clickable == true && tileUp1 != null && tileUp1.clickable == true && tileUp2 != null && tileUp2.clickable == true && tileUp3 != null && tileUp3.clickable == true && tileUp4 != null && tileUp4.clickable == true && gameData.money >= cleanFactoryMoneyCost)
             {
                 if (tileLeft != null && tileLeft.clickable == true && tileLeftUp1 != null && tileLeftUp1.clickable == true && tileLeftUp2 != null && tileLeftUp2.clickable == true && tileLeftUp3 != null && tileLeftUp3.clickable == true && tileLeftUp4 !=null && tileLeftUp4.clickable == true)
                 {
@@ -195,15 +207,16 @@ public class MouseManager : MonoBehaviour
                     Debug.Log("Distance " + distanceVec.magnitude.ToString());
                     buildingToPlace.GetComponent<SpriteRenderer>().sortingOrder = sortOrder;
 
-                    gameData.money -= factoryMoneyCost;
-                    pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - factoryPollutionCost, pollutionBarWidthHeight.y);
-                    gameData.pollutionLevel += factoryPollutionCost;
+                    gameData.money -= cleanFactoryMoneyCost;
+
+                    pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x + cleanFactoryPollutionCost, pollutionBarWidthHeight.y);
+                    gameData.pollutionLevel += cleanFactoryPollutionCost;
                 }
 
 
             }
                 
-            if(bm.selectedBuilding.tag == "Factory" && tileUnderMouse.clickable == true && tileUp1 != null && tileUp1.clickable == true)
+            if(bm.selectedBuilding.tag == "Factory" && tileUnderMouse.clickable == true && tileUp1 != null && tileUp1.clickable == true && gameData.money >= factoryMoneyCost)
             {
                 tileUnderMouse.clickable = false;
 				tileUp1.clickable = false;
@@ -229,12 +242,12 @@ public class MouseManager : MonoBehaviour
 				buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
 
                 gameData.money -= factoryMoneyCost;
-                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - factoryPollutionCost, pollutionBarWidthHeight.y);
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x + factoryPollutionCost, pollutionBarWidthHeight.y);
                 gameData.pollutionLevel += factoryPollutionCost;
                 
             }
 
-            if (bm.selectedBuilding.tag == "Water Tower" &&  tileUnderMouse.clickable == true && tileUp1 != null && tileUp1.clickable == true) 
+            if (bm.selectedBuilding.tag == "Water Tower" &&  tileUnderMouse.clickable == true && tileUp1 != null && tileUp1.clickable == true && gameData.money >= waterMoneyCost) 
 			{
                 tileUnderMouse.clickable = false;
                 tileUp1.clickable = false;
@@ -260,13 +273,13 @@ public class MouseManager : MonoBehaviour
 				buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
 
                 gameData.money -= waterMoneyCost;
-                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - waterPollutionCost, pollutionBarWidthHeight.y);
-                gameData.pollutionLevel -= waterPollutionCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x + waterPollutionCost, pollutionBarWidthHeight.y);
+                gameData.pollutionLevel += waterPollutionCost;
 
                 Debug.Log(pollutionBar.sizeDelta);
 			}
 
-            if (bm.selectedBuilding.tag == "Science Building"  && tileUnderMouse.clickable == true && tileUp1 != null && tileUp1.clickable == true) 
+            if (bm.selectedBuilding.tag == "Science Building"  && tileUnderMouse.clickable == true && tileUp1 != null && tileUp1.clickable == true && gameData.money >= scienceMoneyCost) 
 			{
 				tileUnderMouse.clickable = false;
 				tileUp1.clickable = false;
@@ -290,13 +303,13 @@ public class MouseManager : MonoBehaviour
 				buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder =sortOrder;
 
 				gameData.money -= scienceMoneyCost;
-                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - sciencePollutionCost, pollutionBarWidthHeight.y);
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x + sciencePollutionCost, pollutionBarWidthHeight.y);
 				gameData.pollutionLevel += sciencePollutionCost;
 			}
 
 
 
-			if(bm.selectedBuilding.tag == "Tower" && tileUnderMouse.clickable == true )
+            if(bm.selectedBuilding.tag == "Tower" && tileUnderMouse.clickable == true  && gameData.money >= towerMoneyCost)
             {
                 tileUnderMouse.clickable = false;
                 tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
@@ -316,12 +329,12 @@ public class MouseManager : MonoBehaviour
 				buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
 
                 gameData.money -= towerMoneyCost;
-                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - towerPollutionCost, pollutionBarWidthHeight.y);
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x + towerPollutionCost, pollutionBarWidthHeight.y);
 
                 gameData.pollutionLevel += towerPollutionCost;
             }
 
-            if (bm.selectedBuilding.tag == "Wind Turbine" && tileUnderMouse.clickable == true)
+            if (bm.selectedBuilding.tag == "Wind Turbine" && tileUnderMouse.clickable == true && gameData.money >= windTurbineMoneyCost)
             {
                 tileUnderMouse.clickable = false;
                 tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
@@ -338,14 +351,14 @@ public class MouseManager : MonoBehaviour
                 Debug.Log ("Distance "+distanceVec.magnitude.ToString());
                 buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder = sortOrder;
 
-                gameData.money -= towerMoneyCost;
-                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - towerPollutionCost, pollutionBarWidthHeight.y);
+                gameData.money -= windTurbineMoneyCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x + windTurbinePollutionCost, pollutionBarWidthHeight.y);
 
-                gameData.pollutionLevel += towerPollutionCost;
+                gameData.pollutionLevel += windTurbinePollutionCost;
 
             }
 
-            if(bm.selectedBuilding.tag == "Solar Panel" && tileUnderMouse.clickable == true && tileUp1 != null && tileUp1.clickable == true)
+            if(bm.selectedBuilding.tag == "Solar Panel" && tileUnderMouse.clickable == true && tileUp1 != null && tileUp1.clickable == true && gameData.money >= solarPanelMoneyCost)
             {
                 tileUnderMouse.clickable = false;
                 tileUp1.clickable = false;
@@ -368,9 +381,9 @@ public class MouseManager : MonoBehaviour
                 Debug.Log ("Distance "+distanceVec.magnitude.ToString());
                 buildingToPlace.GetComponent<SpriteRenderer> ().sortingOrder =sortOrder;
 
-                gameData.money -= scienceMoneyCost;
-                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - sciencePollutionCost, pollutionBarWidthHeight.y);
-                gameData.pollutionLevel += sciencePollutionCost;
+                gameData.money -= solarPanelMoneyCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x + solarPanelPollutionCost, pollutionBarWidthHeight.y);
+                gameData.pollutionLevel += solarPanelPollutionCost;
             }
         }
     }
@@ -404,31 +417,53 @@ public class MouseManager : MonoBehaviour
 			if (buildingData.upgraded == false)
 			{		
 			
-				if (ourHitObject.tag == "Factory")
+                if (ourHitObject.tag == "Factory" && gameData.money >= (factoryMoneyCost) + (factoryMoneyCost * 0.75f))
 				{
 					buildingToUpgrade.sprite = factoryUpgrade.GetComponent<SpriteRenderer> ().sprite;
 					buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x + 0.50f, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z + 0.5f);
 					buildingData.upgraded = true;
+
+                    gameData.money -= ((factoryMoneyCost) + (factoryMoneyCost * 0.75f));
+
+                    pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - factoryPollutionCost, pollutionBarWidthHeight.y);
+                    gameData.pollutionLevel -= factoryPollutionCost * 0.25f;
+
 				}
-				if (ourHitObject.tag == "Tower")
+                if (ourHitObject.tag == "Tower" && gameData.money >= (towerMoneyCost) + (towerMoneyCost * 0.75f))
 				{
 					buildingToUpgrade.sprite = towerUpgrade.GetComponent<SpriteRenderer> ().sprite;
 					buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z);
 					buildingData.upgraded = true;
+
+                    gameData.money -= ((towerMoneyCost) + (towerMoneyCost * 0.75f));
+                    pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - towerPollutionCost, pollutionBarWidthHeight.y);
+                    gameData.pollutionLevel -= towerPollutionCost * 0.25f;
+
 				}
-				if (ourHitObject.tag == "Science Building")
+                if (ourHitObject.tag == "Science Building" && gameData.money >= (scienceMoneyCost) + (scienceMoneyCost * 0.75f))
 				{
 					buildingToUpgrade.sprite = scienceBuildingUpgrade.GetComponent<SpriteRenderer> ().sprite;
 					buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x + 0.25f, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z + 0.25f);
-					buildingData.upgraded = true;
+                    buildingData.upgraded = true;
+
+                    gameData.money -= ((scienceMoneyCost) + (scienceMoneyCost * 0.75f));
+                    pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - sciencePollutionCost, pollutionBarWidthHeight.y);
+                    gameData.pollutionLevel -= sciencePollutionCost * 0.25f;
+
+
 				}
-				if (ourHitObject.tag == "Water Tower")
+                if (ourHitObject.tag == "Water Tower" && gameData.money >= (waterMoneyCost) + (waterMoneyCost * 0.75f))
 				{
 					buildingToUpgrade.sprite = waterPlantUpgrade.GetComponent<SpriteRenderer> ().sprite;
 					buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x, buildingToUpgrade.transform.position.y, buildingToUpgrade.transform.position.z + 0.5f);
 					buildingData.upgraded = true;
 
-					
+
+                    gameData.money -= ((waterMoneyCost) + (waterMoneyCost * 0.75f));
+                    pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - waterPollutionCost, pollutionBarWidthHeight.y);
+                    gameData.pollutionLevel -= waterPollutionCost * 0.25f;
+
+
 					if (tileLeft.clickable == true && tileLeftUp1.clickable == true)
 					{
 						buildingData.tileLeft.clickable = false;
@@ -440,16 +475,25 @@ public class MouseManager : MonoBehaviour
 
 					
 				}
-                if (ourHitObject.tag == "Clean Factory")
+                if (ourHitObject.tag == "Clean Factory" && gameData.money >= (cleanFactoryMoneyCost) + (cleanFactoryMoneyCost * 0.75f))
                 {
                     buildingToUpgrade.sprite = cleanFactoryUpgrade.GetComponent<SpriteRenderer>().sprite;
                     buildingToUpgrade.transform.position = new Vector3 (buildingToUpgrade.transform.position.x + 0.25f, buildingToUpgrade.transform.position.y + 0.5f, buildingToUpgrade.transform.position.z + 0.25f);
                     buildingData.upgraded = true;
+
+                    gameData.money -= ((cleanFactoryMoneyCost) + (cleanFactoryMoneyCost * 0.75f));
+                    pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - cleanFactoryPollutionCost, pollutionBarWidthHeight.y);
+                    gameData.pollutionLevel -= cleanFactoryPollutionCost * 0.25f;
+
                 }
 			}
 		}
 	}
 
+    public void PlaySellAudio()
+    {
+        this.GetComponent<AudioSource>().Play();
+    }
 
     public void SellBuilding(GameObject ourHitObject)
     {
@@ -463,10 +507,11 @@ public class MouseManager : MonoBehaviour
 
             if (ourHitObject.tag == "Factory")
             {
-                gameData.money += factoryMoneyCost;
+                gameData.money += factoryMoneyCost * 0.5f;
                 pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - factoryPollutionCost, pollutionBarWidthHeight.y);
 
-                gameData.pollutionLevel -= factoryPollutionCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - factoryPollutionCost, pollutionBarWidthHeight.y);
+                gameData.pollutionLevel -= factoryPollutionCost * 0.5f;
 
 				buildingData.tileUnderMouse.clickable = true;
 				buildingData.tileUp1.clickable = true;
@@ -476,30 +521,33 @@ public class MouseManager : MonoBehaviour
             }
             if (ourHitObject.tag == "Tower")
             {
-                gameData.money += towerMoneyCost;
+                gameData.money += towerMoneyCost * 0.5f;
                 pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - towerPollutionCost, pollutionBarWidthHeight.y);
 
-                gameData.pollutionLevel -= towerPollutionCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - towerPollutionCost, pollutionBarWidthHeight.y);
+                gameData.pollutionLevel -= towerPollutionCost * 0.5f;
 
 				buildingData.tileUnderMouse.clickable = true;
                 Destroy(ourHitObject);
             }
             if (ourHitObject.tag == "Wind Turbine")
             {
-                gameData.money += windTurbineMoneyCost;
+                gameData.money += windTurbineMoneyCost * 0.5f;
                 pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - windTurbinePollutionCost, pollutionBarWidthHeight.y);
 
-                gameData.pollutionLevel -= windTurbinePollutionCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - windTurbinePollutionCost, pollutionBarWidthHeight.y);
+                gameData.pollutionLevel -= windTurbinePollutionCost * 0.5f;
 
                 buildingData.tileUnderMouse.clickable = true;
                 Destroy(ourHitObject);
             }
             if (ourHitObject.tag == "Solar Panel")
             {
-                gameData.money += solarPanelMoneyCost;
+                gameData.money += solarPanelMoneyCost * 0.5f;
                 pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - solarPanelPollutionCost, pollutionBarWidthHeight.y);
 
-                gameData.pollutionLevel -= solarPanelPollutionCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - solarPanelPollutionCost, pollutionBarWidthHeight.y);
+                gameData.pollutionLevel -= solarPanelPollutionCost * 0.5f;
 
 
                 buildingData.tileUnderMouse.clickable = true;
@@ -509,10 +557,11 @@ public class MouseManager : MonoBehaviour
             }
             if (ourHitObject.tag == "Science Building")
             {
-                gameData.money += scienceMoneyCost;
+                gameData.money += scienceMoneyCost * 0.5f;
                 pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - sciencePollutionCost, pollutionBarWidthHeight.y);
 
-                gameData.pollutionLevel -= sciencePollutionCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - sciencePollutionCost, pollutionBarWidthHeight.y);
+                gameData.pollutionLevel -= sciencePollutionCost - 0.5f;
 
 
 				buildingData.tileUnderMouse.clickable = true;
@@ -522,10 +571,11 @@ public class MouseManager : MonoBehaviour
             }
             if (ourHitObject.tag == "Water Tower")
             {
-                gameData.money += waterMoneyCost;
+                gameData.money += waterMoneyCost * 0.5f;
                 pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - waterPollutionCost, pollutionBarWidthHeight.y);
 
-                gameData.pollutionLevel -= waterPollutionCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - waterPollutionCost, pollutionBarWidthHeight.y);
+                gameData.pollutionLevel -= waterPollutionCost * 0.5f;
 
 				buildingData.tileUnderMouse.clickable = true;
 				buildingData.tileUp1.clickable = true;
@@ -536,10 +586,11 @@ public class MouseManager : MonoBehaviour
             }
             if (ourHitObject.tag == "Clean Factory")
             {
-                gameData.money += waterMoneyCost;
+                gameData.money += cleanFactoryMoneyCost * 0.5f;
                 pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - waterPollutionCost, pollutionBarWidthHeight.y);
 
-                gameData.pollutionLevel -= waterPollutionCost;
+                pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - cleanFactoryPollutionCost, pollutionBarWidthHeight.y);
+                gameData.pollutionLevel -= cleanFactoryPollutionCost * 0.5f;
 
                 buildingData.tileUnderMouse.clickable = true;
                 buildingData.tileUp1.clickable = true;

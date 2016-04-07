@@ -4,8 +4,8 @@ using UnityEngine.UI;
 
 public class GameData : MonoBehaviour
 {
-    public int pollutionLevel = 100;
-    public int money = 200;
+    public float pollutionLevel = 100;
+    public float money = 350;
 
     public Text moneyText;
     public Text pollutionText;
@@ -21,6 +21,7 @@ public class GameData : MonoBehaviour
     {
         moneyText.text = "    $" + money.ToString();
         pollutionText.text = "Pollution: ";
+
 	}
 
 }
