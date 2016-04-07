@@ -11,21 +11,26 @@ public class MouseManager : MonoBehaviour
     public toggleUIScript toggleUI;
     public GameData gameData;
 
-    public int factoryPollutionCost = 5;
-    public int factoryMoneyCost = 30;
-    public int towerPollutionCost = 10;
-    public int towerMoneyCost = 20;
-    public int sciencePollutionCost = 20;
+    public float factoryPollutionCost = 0.5f;
+    public int factoryMoneyCost = 15;
+
+    public int towerPollutionCost = 0;
+    public int towerMoneyCost = 10;
+
+    public float sciencePollutionCost = 0.25f;
     public int scienceMoneyCost = 60;
-    public int waterPollutionCost = 10;
-    public int waterMoneyCost = 30;
-    public int cleanFactoryMoneyCost = 40;
-    public int cleanFactoryPollutionCost = 30;
+
+    public float waterPollutionCost = -0.2f;
+    public int waterMoneyCost = 15;
+
+    public int cleanFactoryMoneyCost = 20;
+    public float cleanFactoryPollutionCost = 0.1f;
+
     public int windTurbineMoneyCost = 30;
-    public int windTurbinePollutionCost = 40;
+    public float windTurbinePollutionCost = -0.2f;
+
     public int solarPanelMoneyCost = 30;
-    public int solarPanelPollutionCost = 5;
-    public float pollutionTimer = 1;
+    public float solarPanelPollutionCost = -0.5f;
 
 	public int maxBuildDistance = 40;
 
@@ -52,13 +57,14 @@ public class MouseManager : MonoBehaviour
     public TileColorChange tileLeftUp4;
 
     public float timeLeft = 1.0f;
+    public int buildingCounter;
 
 	public SpriteRenderer buildingToUpgrade;
 
 	public CameraSwitcher cameraSwitcher;
 
     public RectTransform pollutionBar;
-    Vector2 pollutionBarWidthHeight;
+    public Vector2 pollutionBarWidthHeight;
 
 
 
@@ -84,7 +90,6 @@ public class MouseManager : MonoBehaviour
             gameData.pollutionLevel += 1;
             pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x += 1, pollutionBarWidthHeight.y);
             timeLeft = 1.0f;
-
         }
 
 
@@ -160,6 +165,8 @@ public class MouseManager : MonoBehaviour
             {
                 if (tileLeft != null && tileLeft.clickable == true && tileLeftUp1 != null && tileLeftUp1.clickable == true && tileLeftUp2 != null && tileLeftUp2.clickable == true && tileLeftUp3 != null && tileLeftUp3.clickable == true && tileLeftUp4 !=null && tileLeftUp4.clickable == true)
                 {
+                    buildingCounter += 1;
+
                     tileUnderMouse.clickable = false;
                     tileUp1.clickable = false;
                     tileUp2.clickable = false;
@@ -218,6 +225,8 @@ public class MouseManager : MonoBehaviour
                 
             if(bm.selectedBuilding.tag == "Factory" && tileUnderMouse.clickable == true && tileUp1 != null && tileUp1.clickable == true && gameData.money >= factoryMoneyCost)
             {
+                buildingCounter += 1;
+
                 tileUnderMouse.clickable = false;
 				tileUp1.clickable = false;
 
@@ -249,6 +258,8 @@ public class MouseManager : MonoBehaviour
 
             if (bm.selectedBuilding.tag == "Water Tower" &&  tileUnderMouse.clickable == true && tileUp1 != null && tileUp1.clickable == true && gameData.money >= waterMoneyCost) 
 			{
+                buildingCounter += 1;
+
                 tileUnderMouse.clickable = false;
                 tileUp1.clickable = false;
 
@@ -281,6 +292,8 @@ public class MouseManager : MonoBehaviour
 
             if (bm.selectedBuilding.tag == "Science Building"  && tileUnderMouse.clickable == true && tileUp1 != null && tileUp1.clickable == true && gameData.money >= scienceMoneyCost) 
 			{
+                buildingCounter += 1;
+
 				tileUnderMouse.clickable = false;
 				tileUp1.clickable = false;
 
@@ -311,6 +324,8 @@ public class MouseManager : MonoBehaviour
 
             if(bm.selectedBuilding.tag == "Tower" && tileUnderMouse.clickable == true  && gameData.money >= towerMoneyCost)
             {
+                buildingCounter += 1;
+
                 tileUnderMouse.clickable = false;
                 tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
 
@@ -336,6 +351,8 @@ public class MouseManager : MonoBehaviour
 
             if (bm.selectedBuilding.tag == "Wind Turbine" && tileUnderMouse.clickable == true && gameData.money >= windTurbineMoneyCost)
             {
+                buildingCounter += 1;
+
                 tileUnderMouse.clickable = false;
                 tileUnderMouse.GetComponent<MeshRenderer>().material.color = Color.white;
 
@@ -360,6 +377,8 @@ public class MouseManager : MonoBehaviour
 
             if(bm.selectedBuilding.tag == "Solar Panel" && tileUnderMouse.clickable == true && tileUp1 != null && tileUp1.clickable == true && gameData.money >= solarPanelMoneyCost)
             {
+                buildingCounter += 1;
+
                 tileUnderMouse.clickable = false;
                 tileUp1.clickable = false;
 
@@ -507,6 +526,8 @@ public class MouseManager : MonoBehaviour
 
             if (ourHitObject.tag == "Factory")
             {
+                buildingCounter -= 1;
+
                 gameData.money += factoryMoneyCost * 0.5f;
                 pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - factoryPollutionCost, pollutionBarWidthHeight.y);
 
@@ -521,6 +542,8 @@ public class MouseManager : MonoBehaviour
             }
             if (ourHitObject.tag == "Tower")
             {
+                buildingCounter -= 1;
+
                 gameData.money += towerMoneyCost * 0.5f;
                 pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - towerPollutionCost, pollutionBarWidthHeight.y);
 
@@ -532,6 +555,8 @@ public class MouseManager : MonoBehaviour
             }
             if (ourHitObject.tag == "Wind Turbine")
             {
+                buildingCounter -= 1;
+
                 gameData.money += windTurbineMoneyCost * 0.5f;
                 pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - windTurbinePollutionCost, pollutionBarWidthHeight.y);
 
@@ -543,6 +568,8 @@ public class MouseManager : MonoBehaviour
             }
             if (ourHitObject.tag == "Solar Panel")
             {
+                buildingCounter -= 1;
+
                 gameData.money += solarPanelMoneyCost * 0.5f;
                 pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - solarPanelPollutionCost, pollutionBarWidthHeight.y);
 
@@ -557,6 +584,8 @@ public class MouseManager : MonoBehaviour
             }
             if (ourHitObject.tag == "Science Building")
             {
+                buildingCounter -= 1;
+
                 gameData.money += scienceMoneyCost * 0.5f;
                 pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - sciencePollutionCost, pollutionBarWidthHeight.y);
 
@@ -571,6 +600,8 @@ public class MouseManager : MonoBehaviour
             }
             if (ourHitObject.tag == "Water Tower")
             {
+                buildingCounter -= 1;
+
                 gameData.money += waterMoneyCost * 0.5f;
                 pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - waterPollutionCost, pollutionBarWidthHeight.y);
 
@@ -586,6 +617,8 @@ public class MouseManager : MonoBehaviour
             }
             if (ourHitObject.tag == "Clean Factory")
             {
+                buildingCounter -= 1;
+
                 gameData.money += cleanFactoryMoneyCost * 0.5f;
                 pollutionBar.sizeDelta = new Vector2(pollutionBarWidthHeight.x - waterPollutionCost, pollutionBarWidthHeight.y);
 
