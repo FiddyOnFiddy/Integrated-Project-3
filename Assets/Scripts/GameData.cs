@@ -21,7 +21,7 @@ public class GameData : MonoBehaviour
 	void Update ()
     {
         moneyText.text = "    $" + money.ToString();
-        pollutionText.text = "Pollution: ";
+        pollutionText.text = " ";
 
 	}
 
